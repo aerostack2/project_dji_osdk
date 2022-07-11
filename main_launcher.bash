@@ -19,7 +19,11 @@ new_window 'trajectory_generator' "ros2 launch trajectory_generator trajectory_g
     drone_id:=$drone_namespace "
 
 new_window 'basic_behaviours' "ros2 launch as2_basic_behaviours all_basic_behaviours_launch.py \
-    drone_id:=$drone_namespace "
+    drone_id:=$drone_namespace \
+    config_takeoff:=./config/takeoff_behaviour.yaml \
+    config_land:=./config/land_behaviour.yaml \
+    config_goto:=./config/goto_behaviour.yaml \
+    config_follow_path:=./config/follow_path_behaviour.yaml "
 
 new_window 'static_transform_publisher' "ros2 launch basic_tf_tree_generator basic_tf_tree_generator_launch.py \
     drone_id:=$drone_namespace "
