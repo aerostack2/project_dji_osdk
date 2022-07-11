@@ -1,9 +1,6 @@
 #!/bin/bash
-SESSION=$USER
 
-sessions=$(tmux ls | awk '{print $1}' | sed "s/://g" | grep $SESSION)
+drone_namespace=$1
+drone_namespace=${drone_namespace:="drone0"}
 
-for sess in $sessions
-do
-    tmux kill-session -t $sess
-done
+tmux kill-session -t $drone_namespace

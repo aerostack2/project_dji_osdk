@@ -9,7 +9,6 @@ ros2 bag record \
 "/$drone_namespace/actuator_command/thrust" \
 "/$drone_namespace/actuator_command/twist" \
 "/$drone_namespace/motion_reference/trajectory" \
-"/$drone_namespace/image_raw" \
-"/$drone_namespace/aruco_gate_detector/gate_img_topic" 
+"/$drone_namespace/image_raw" 
 
 
