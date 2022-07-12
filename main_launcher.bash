@@ -25,7 +25,7 @@ new_window 'basic_behaviours' "ros2 launch as2_basic_behaviours all_basic_behavi
     config_goto:=./config/goto_behaviour.yaml \
     config_follow_path:=./config/follow_path_behaviour.yaml "
 
-new_window 'static_transform_publisher' "ros2 launch basic_tf_tree_generator basic_tf_tree_generator_launch.py \
+new_window 'basic_state_estimator' "ros2 launch basic_state_estimator basic_state_estimator_launch.py \
     drone_id:=$drone_namespace "
 
 new_window 'gps_translator' "ros2 launch gps_utils gps_translator_launch.py"
