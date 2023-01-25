@@ -1,4 +1,3 @@
-
 WINDOW_ID=0
 
 function new_session() {
@@ -24,3 +23,5 @@ function new_window() {
   fi
   WINDOW_ID=$((WINDOW_ID+1))
 }
+
+WINDOW_ID=0

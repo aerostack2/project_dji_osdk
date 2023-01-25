@@ -7,33 +7,47 @@ drone_namespace=${drone_namespace:="drone0"}
 source ./launch_tools.bash
 
 new_session $drone_namespace
+use_sim_time='false'
+controller="speed_controller" 
+behavior_type="position"
 
-new_window 'DJI interface' "ros2 launch dji_matrice_platform dji_matrice_platform_launch.py \
-    drone_id:=$drone_namespace \
-    simulation_mode:=false"
 
-new_window 'controller_manager' "ros2 launch controller_manager controller_manager_launch.py \
-    drone_id:=$drone_namespace"
+new_window 'platform' "ros2 launch as2_platform_dji_osdk as2_platform_dji_osdk_launch.py \
+    namespace:=$drone_namespace \
+    use_sim_time:=$use_sim_time \
+    dji_app_config:=UserConfig.txt"
 
-new_window 'trajectory_generator' "ros2 launch trajectory_generator trajectory_generator_launch.py  \
-    drone_id:=$drone_namespace "
+new_window 'controller' "ros2 launch as2_controller controller_launch.py \
+    namespace:=$drone_namespace \
+    use_sim_time:=$use_sim_time \
+    cmd_freq:=100.0 \
+    info_freq:=10.0 \
+    use_bypass:=true \
+    plugin_name:=${controller} \
+    plugin_config_file:=config/${controller}_config.yaml"
 
-new_window 'basic_behaviours' "ros2 launch as2_basic_behaviours all_basic_behaviours_launch.py \
-    drone_id:=$drone_namespace \
-    config_takeoff:=./config/takeoff_behaviour.yaml \
-    config_land:=./config/land_behaviour.yaml \
-    config_goto:=./config/goto_behaviour.yaml \
-    config_follow_path:=./config/follow_path_behaviour.yaml "
+new_window 'state_estimator' "ros2 launch as2_state_estimator state_estimator_launch.py \
+    namespace:=$drone_namespace \
+    use_sim_time:=$use_sim_time \
+    plugin_name:=external_odom \
+    plugin_config_file:=config/external_odom_config.yaml"
 
-new_window 'basic_state_estimator' "ros2 launch basic_state_estimator basic_state_estimator_launch.py \
-    drone_id:=$drone_namespace "
+new_window 'behaviors' "ros2 launch as2_behaviors_motion motion_behaviors_launch.py \
+    namespace:=$drone_namespace \
+    use_sim_time:=$use_sim_time \
+    follow_path_plugin_name:=follow_path_plugin_$behavior_type \
+    goto_plugin_name:=goto_plugin_$behavior_type \
+    takeoff_plugin_name:=takeoff_plugin_platform \
+    land_plugin_name:=land_plugin_platform \
+    goto_threshold:=0.5 \
+    takeoff_threshold:=0.5"
 
-new_window 'gps_translator' "ros2 launch gps_utils gps_translator_launch.py"
+
 
 if [ -n "$TMUX" ]
   # if inside a tmux session detach before attaching to the session
 then
-   tmux switch-client -t $session:1
+   tmux switch-client -t $drone_namespace:1
     else
-  tmux attach -t $session:1
+  tmux attach -t $drone_namespace:1
 fi

@@ -1,5 +1,0 @@
-# /**/takeoff_behaviour: 
-/**:
-  ros__parameters:
-    default_land_plugin: "land_plugin_platform"
-    default_land_speed: 0.2     # [m/s]
