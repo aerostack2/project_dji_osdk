@@ -9,13 +9,13 @@ def drone_run(drone_interface: DroneInterface):
 
     origin = [40.158194, -3.380795, 0]
 
-    sleep_time = 2.0
+    sleep_time = 10.0
 
     drone_interface.gps.set_origin(origin)
     print("ORIGIN at", drone_interface.gps.origin)
     print("Start mission")
 
-    # ##### ARM OFFBOARD #####
+    ##### ARM OFFBOARD #####
     drone_interface.arm()
     drone_interface.offboard()
 
@@ -26,13 +26,13 @@ def drone_run(drone_interface: DroneInterface):
     sleep(sleep_time)
 
     print("Go to Point")
-    drone_interface.goto.go_to_gps_point(
+    drone_interface.go_to.go_to_gps_point(
         [40.158183, -3.380893, 2.0], speed=1.0)
     print("Goto done")
     sleep(sleep_time)
 
     print("Go to Return")
-    drone_interface.goto.go_to_gps_point(
+    drone_interface.go_to.go_to_gps_point(
         [40.158194, -3.380795, 2.0], speed=1.0)
     print("Go to return done")
     sleep(sleep_time)
