@@ -1,0 +1,43 @@
+# reliability_override.yaml
+
+/drone0/platform/info:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/drone0/self_localization/pose:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/drone0/self_localization/twist:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/drone0/sensor_measurements/imu:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/drone0/sensor_measurements/odom:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/drone0/sensor_measurements/gps:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/drone_namespace/fmu/vehicle_odometry/out:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/drone_namespace/fmu/sensor_gps/out:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/tf:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+/tf_static:
+  reliability: best_effort
+  history: keep_all
+  depth: 5
+

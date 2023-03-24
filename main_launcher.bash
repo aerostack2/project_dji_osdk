@@ -4,7 +4,10 @@
 drone_namespace=$1
 drone_namespace=${drone_namespace:="drone0"}
 
-source ./launch_tools.bash
+record_rosbag=$2
+record_rosbag=${record_rosbag:="false"}
+
+source ./tools/launch_tools.bash
 
 new_session $drone_namespace
 
@@ -12,12 +15,14 @@ use_sim_time='false'
 controller="pid_speed_controller" 
 behavior_type="position"
 
-
 new_window 'platform' "ros2 launch as2_platform_dji_osdk as2_platform_dji_osdk_launch.py \
     namespace:=$drone_namespace \
     use_sim_time:=$use_sim_time \
     simulation_mode:=true \
     dji_app_config:=UserConfig.txt"
+
+new_window 'alphanumeric_viewer' "ros2 run as2_alphanumeric_viewer as2_alphanumeric_viewer_node \
+    --ros-args -r  __ns:=/$drone_namespace"
 
 new_window 'controller' "ros2 launch as2_motion_controller controller_launch.py \
     namespace:=$drone_namespace \
@@ -44,7 +49,17 @@ new_window 'behaviors' "ros2 launch as2_behaviors_motion motion_behaviors_launch
     go_to_threshold:=0.5 \
     takeoff_threshold:=0.5"
 
+if [[ "$behavior_type" == "trajectory" ]]
+then
+    new_window 'traj_generator' "ros2 launch as2_behaviors_trajectory_generation generate_polynomial_trajectory_behavior_launch.py  \
+        namespace:=$drone_namespace \
+        use_sim_time:=$use_sim_time"
+fi
 
+if [[ "$record_rosbag" == "true" ]]
+then
+    new_window 'record rosbag' "./rosbag/record_rosbag.bash $drone_namespace"
+fi
 
 # if inside a tmux session detach before attaching to the session
 if [ -n "$TMUX" ]; then
