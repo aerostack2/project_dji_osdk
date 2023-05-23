@@ -34,8 +34,8 @@ windows:
         - ros2 launch as2_platform_dji_osdk as2_platform_dji_osdk_launch.py
             namespace:=<%= drone_namespace %>
             use_sim_time:=<%= simulation %>
-            platform_config_file:=real_config/platform_config.yaml \
-            user_config_file:=UserConfig.txt"
+            platform_config_file:=real_config/platform_config.yaml
+            user_config_file:=UserConfig.txt
   - state_estimator:
       layout:
       panes:
