@@ -2,7 +2,6 @@
 
 usage() {
     echo "  options:"
-    echo "      -s: simulated, choices: [true | false]"
     echo "      -g: use GPS, choices: [true | false]"
     echo "      -e: estimator_type, choices: [raw_odometry, mocap_pose]"
     echo "      -r: record rosbag"
@@ -13,9 +12,6 @@ usage() {
 # Arg parser
 while getopts "se:rtn" opt; do
   case ${opt} in
-    s )
-      simulated="true"
-      ;;
     g )
       gps="true"
       ;;
@@ -67,23 +63,22 @@ done
 
 for ns in "${drone_ns[@]}"
 do
-  if [[ ${ns} == ${drone_ns[0]} ]]; then
-    base_launch="true"
-  else
-    base_launch="false"
-  fi 
-
-  tmuxinator start -n ${ns} -p utils/session.yml drone_namespace=${ns} gps=${gps} estimator_plugin=${estimator_plugin} &
+  tmuxinator start -n ${ns} -p tmuxinator/session.yml drone_namespace=${ns} gps=${gps} estimator_plugin=${estimator_plugin} &
   wait
 done
 
+if [[ ${estimator_plugin} == "mocap_pose" ]]; then
+  tmuxinator start -n mocap -p tmuxinator/mocap.yml &
+  wait
+fi
+
 if [[ ${record_rosbag} == "true" ]]; then
-  tmuxinator start -n rosbag -p utils/rosbag.yml drone_namespace=$(list_to_string "${drone_ns[@]}") &
+  tmuxinator start -n rosbag -p tmuxinator/rosbag.yml drone_namespace=$(list_to_string "${drone_ns[@]}") &
   wait
 fi
 
 if [[ ${launch_keyboard_teleop} == "true" ]]; then
-  tmuxinator start -n keyboard_teleop -p utils/keyboard_teleop.yml simulation=true drone_namespace=$(list_to_string "${drone_ns[@]}") &
+  tmuxinator start -n keyboard_teleop -p tmuxinator/keyboard_teleop.yml simulation=true drone_namespace=$(list_to_string "${drone_ns[@]}") &
   wait
 fi
 
