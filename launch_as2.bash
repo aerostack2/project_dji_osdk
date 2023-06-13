@@ -2,6 +2,7 @@
 
 usage() {
     echo "  options:"
+    echo "      -p: platform, choices: [ign_gz | dji_osdk]"    
     echo "      -g: use GPS, choices: [true | false]"
     echo "      -e: estimator_type, choices: [raw_odometry, mocap_pose]"
     echo "      -r: record rosbag"
@@ -10,10 +11,10 @@ usage() {
 }
 
 # Arg parser
-while getopts "se:rtn" opt; do
+while getopts "p:e:rtn" opt; do
   case ${opt} in
-    g )
-      gps="true"
+    p )
+      platform="${OPTARG}"
       ;;
     e )
       estimator_plugin="${OPTARG}"
@@ -33,7 +34,7 @@ while getopts "se:rtn" opt; do
       exit 1
       ;;
     : )
-      if [[ ! $OPTARG =~ ^[swrt]$ ]]; then
+      if [[ ! $OPTARG =~ ^[pswrt]$ ]]; then
         echo "Option -$OPTARG requires an argument" >&2
         usage
         exit 1
@@ -48,11 +49,13 @@ source utils/tools.bash
 shift $((OPTIND -1))
 
 ## DEFAULTS
-gps=${gps:="true"}
+platform=${platform:="dji_osdk"}
 estimator_plugin=${estimator_plugin:="raw_odometry"}
 record_rosbag=${record_rosbag:="false"}
 launch_keyboard_teleop=${launch_keyboard_teleop:="false"}
 drone_namespace=${drone_namespace:="drone"}
+simulation_config="sim_config/gazebo_config/world.json"
+use_sim_time="false"
 
 # Generate the list of drone namespaces
 drone_ns=()
@@ -61,9 +64,19 @@ for ((i=0; i<${num_drones}; i++)); do
   drone_ns+=("$drone_namespace$i")
 done
 
+# Launch Gazebo
+if [[ ${platform} == "ign_gz" ]]; then
+  use_sim_time="true"
+  estimator_plugin="ground_truth"
+  tmuxinator start -n gazebo -p tmuxinator/gazebo.yml drone_namespace=${drone_namespace} use_sim_time=${use_sim_time} simulation_config=${simulation_config} &
+  wait
+fi
+
+# Always gps with raw_odometry and ground_truth, unless mocap_pose is used
+
 for ns in "${drone_ns[@]}"
 do
-  tmuxinator start -n ${ns} -p tmuxinator/session.yml drone_namespace=${ns} gps=${gps} estimator_plugin=${estimator_plugin} &
+  tmuxinator start -n ${ns} -p tmuxinator/aerostack.yml drone_namespace=${ns} platform=${platform} simulation_config=${simulation_config} estimator_plugin=${estimator_plugin} use_sim_time=${use_sim_time} &
   wait
 done
 

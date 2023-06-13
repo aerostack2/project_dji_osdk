@@ -1,0 +1,29 @@
+{
+    "world_name": "empty_gps",
+    "drones": [
+        {
+            "model_type": "quadrotor_base",
+            "model_name": "drone0",
+            "xyz": [
+                1.0,
+                1.0,
+                0.3
+            ],
+            "rpy": [
+                0,
+                0,
+                0
+            ],
+            "payload": [
+                {
+                    "model_type": "gps",
+                    "model_name": "gps"
+                },
+                {
+                    "model_type": "hd_camera",
+                    "model_name": "hd_camera"
+                }
+            ]
+        }
+    ]
+}

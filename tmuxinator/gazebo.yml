@@ -1,0 +1,19 @@
+<%
+# Input parameters
+drone_namespace    = @settings["drone_namespace"]
+use_sim_time       = @settings["use_sim_time"]
+simulation_config  = @settings["simulation_config"]
+
+%>
+
+attach: false
+root: ./
+startup_window: gazebo
+windows:
+  - gazebo:
+      layout:
+      panes:
+        - ros2 launch as2_ign_gazebo_assets launch_simulation.py
+            use_sim_time:=<%= use_sim_time %>
+            simulation_config_file:=<%= simulation_config %>
+
