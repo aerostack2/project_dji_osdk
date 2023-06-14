@@ -16,6 +16,7 @@ if estimator_plugin == "mocap_pose"
 elif estimator_plugin == "raw_odometry"
     state_estimator_mode = "state_estimator_odom.yaml"
 else
+    estimator_plugin = "raw_odometry"
     state_estimator_mode = "state_estimator_gps.yaml"
 end
 
@@ -61,8 +62,8 @@ windows:
             use_sim_time:=<%= use_sim_time %>
             follow_path_plugin_name:=follow_path_plugin_<%= behavior_type %>
             go_to_plugin_name:=go_to_plugin_<%= behavior_type %>
-            takeoff_plugin_name:=takeoff_plugin_<%= behavior_type %>
-            land_plugin_name:=land_plugin_speed
+            takeoff_plugin_name:=takeoff_plugin_platform
+            land_plugin_name:=land_plugin_platform
         <%- if behavior_type == "trajectory" %>
         - ros2 launch as2_behaviors_trajectory_generation generate_polynomial_trajectory_behavior_launch.py
             namespace:=<%= drone_namespace %>
