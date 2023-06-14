@@ -1,9 +1,0 @@
-/**:
-  ros__parameters:
-    use_ignition_tf: true
-    use_gps: true
-    set_origin_on_start: true
-    set_origin:
-      lat: 52.171776
-      lon: 4.416351
-      alt: 45.110

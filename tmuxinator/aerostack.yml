@@ -1,24 +1,20 @@
 <%
 # Input parameters
 drone_namespace     = @settings["drone_namespace"]
-platform            = @settings["platform"]
 simulation_config   = @settings["simulation_config"]
 estimator_plugin    = @settings["estimator_plugin"]
 use_sim_time        = @settings["use_sim_time"]
 
 # Other parameters
+config_folder               = "dji_osdk_config"
 behavior_type               = "position"
 motion_controller_plugin    = "pid_speed_controller"
 
-if platform == "ign_gz"
-  config_folder = "sim_config"
-  estimator_plugin = "ground_truth"
-elsif platform == "dji_osdk"
-  config_folder = "dji_osdk_config"
-end
 
 if estimator_plugin == "mocap_pose"
     state_estimator_mode = "state_estimator_mocap.yaml"
+elif estimator_plugin == "raw_odometry"
+    state_estimator_mode = "state_estimator_odom.yaml"
 else
     state_estimator_mode = "state_estimator_gps.yaml"
 end
@@ -35,19 +31,11 @@ windows:
   - platform:
       layout: tiled
       panes:
-    <%- if platform == "ign_gz" %>
-        - ros2 launch as2_platform_ign_gazebo ign_gazebo_launch.py
-            namespace:=<%= drone_namespace %>
-            use_sim_time:=<%= use_sim_time %>
-            simulation_config_file:=<%= simulation_config %>
-            platform_config_file:=<%= config_folder %>/platform_config.yaml
-    <%- elsif platform == "dji_osdk" %>
         - ros2 launch as2_platform_dji_osdk as2_platform_dji_osdk_launch.py
             namespace:=<%= drone_namespace %>
             use_sim_time:=<%= use_sim_time %>
             platform_config_file:=<%= config_folder %>/platform_config.yaml
             user_config_file:=UserConfig.txt
-    <%- end %>
   - state_estimator:
       layout:
       panes:

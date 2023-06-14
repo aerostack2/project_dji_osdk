@@ -2,20 +2,15 @@
 
 usage() {
     echo "  options:"
-    echo "      -p: platform, choices: [ign_gz | dji_osdk]"    
-    echo "      -g: use GPS, choices: [true | false]"
-    echo "      -e: estimator_type, choices: [raw_odometry, mocap_pose]"
+    echo "      -e: estimator_type, choices: [gps_odometry, raw_odometry, mocap_pose]"
     echo "      -r: record rosbag"
     echo "      -t: launch keyboard teleoperation"
     echo "      -n: drone namespace, default is drone0"
 }
 
 # Arg parser
-while getopts "p:e:rtn" opt; do
+while getopts "e:grtn" opt; do
   case ${opt} in
-    p )
-      platform="${OPTARG}"
-      ;;
     e )
       estimator_plugin="${OPTARG}"
       ;;
@@ -50,11 +45,10 @@ shift $((OPTIND -1))
 
 ## DEFAULTS
 platform=${platform:="dji_osdk"}
-estimator_plugin=${estimator_plugin:="raw_odometry"}
+estimator_plugin=${estimator_plugin:="gps_odometry"}
 record_rosbag=${record_rosbag:="false"}
 launch_keyboard_teleop=${launch_keyboard_teleop:="false"}
 drone_namespace=${drone_namespace:="drone"}
-simulation_config="sim_config/gazebo_config/world.json"
 use_sim_time="false"
 
 # Generate the list of drone namespaces
@@ -64,19 +58,11 @@ for ((i=0; i<${num_drones}; i++)); do
   drone_ns+=("$drone_namespace$i")
 done
 
-# Launch Gazebo
-if [[ ${platform} == "ign_gz" ]]; then
-  use_sim_time="true"
-  estimator_plugin="ground_truth"
-  tmuxinator start -n gazebo -p tmuxinator/gazebo.yml drone_namespace=${drone_namespace} use_sim_time=${use_sim_time} simulation_config=${simulation_config} &
-  wait
-fi
-
 # Always gps with raw_odometry and ground_truth, unless mocap_pose is used
 
 for ns in "${drone_ns[@]}"
 do
-  tmuxinator start -n ${ns} -p tmuxinator/aerostack.yml drone_namespace=${ns} platform=${platform} simulation_config=${simulation_config} estimator_plugin=${estimator_plugin} use_sim_time=${use_sim_time} &
+  tmuxinator start -n ${ns} -p tmuxinator/aerostack.yml drone_namespace=${ns} platform=${platform} estimator_plugin=${estimator_plugin} use_sim_time=${use_sim_time} &
   wait
 done
 
