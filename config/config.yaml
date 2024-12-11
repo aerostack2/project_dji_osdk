@@ -1,0 +1,51 @@
+/**:
+  # Global Parameters
+  ros__parameters:
+    tf_timeout_threshold: 0.05
+
+/**:
+  # Basic Robotics Functions
+  # Platform
+  platform:
+    ros__parameters:
+      enable_advanced_sensing: false  # Enable the possibility to access to all cameras and sensor
+      publish_camera: false 
+
+  # State Estimator
+  state_estimator:
+    ros__parameters:
+      # # Indoor Raw Odometry
+      # plugin_name: "raw_odometry"
+      # # Indoor Motion Capture
+      # plugin_name: "mocap_pose"
+      # mocap_topic: "/mocap/rigid_bodies"
+      # twist_smooth_filter_cte: 0.1
+      # orientation_smooth_filter_cte: 0.1
+      # Outdoor (GPS) Raw Odometry
+      plugin_name: "raw_odometry"
+      use_gps: true
+      set_origin_on_start: true
+
+  # Behaviors Motion
+  TakeoffBehavior:
+    ros__parameters:
+      takeoff_plugin_name: "takeoff_plugin_platform"
+  LandBehavior:
+    ros__parameters:
+      land_plugin_name: "land_plugin_platform"
+  GoToBehavior:
+    ros__parameters:
+      go_to_plugin_name: "go_to_plugin_position"
+      # go_to_plugin_name: "go_to_plugin_trajectory"
+  FollowPathBehavior:
+    ros__parameters:
+      follow_path_plugin_name: "follow_path_plugin_position"
+      # follow_path_plugin_name: "follow_path_plugin_trajectory"
+
+# Specific Parameters for each drone
+# drone0:
+#   # Motion Capture
+#   state_estimator:
+#     ros__parameters:
+#       rigid_body_name: "1"
+
